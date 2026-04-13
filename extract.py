@@ -10,30 +10,32 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(post_data)
             url = data.get('url')
 
-            # Your Cloudflare Proxy URL
-            # Note: We use the direct worker URL here
-            proxy_url = "https://m-proxy-api.zorawareu.workers.dev/?url="
-
+            # We remove the 'proxy' setting entirely to fix the dependency error
+            # and instead use 'impersonate' logic via headers
             ydl_opts = {
                 'format': 'best',
                 'quiet': True,
                 'no_warnings': True,
                 'nocheckcertificate': True,
-                # We pass the proxy to yt-dlp
-                'proxy': proxy_url,
                 'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'add_header': [
+                    'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    'Accept-Language: en-us,en;q=0.5',
+                ],
+                # This helps bypass the "bot" detection on Vercel IPs
+                'extractor_args': {'youtube': {'player_client': ['android_test', 'web_creator']}}
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                # We only want the info, no downloading!
                 info = ydl.extract_info(url, download=False)
-                
-                # Extract the direct link
                 video_url = info.get('url')
+                
                 if not video_url and 'formats' in info:
-                    # Select the best format with both audio and video
-                    best_format = next((f for f in info['formats'][::-1] if f.get('acodec') != 'none' and f.get('vcodec') != 'none'), info['formats'][-1])
-                    video_url = best_format.get('url')
+                    # Filter for MP4 directly
+                    for f in info['formats']:
+                        if f.get('vcodec') != 'none' and f.get('acodec') != 'none' and f.get('ext') == 'mp4':
+                            video_url = f.get('url')
+                            break
 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
