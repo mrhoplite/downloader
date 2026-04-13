@@ -1,19 +1,10 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "extract.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
+    { "src": "extract.py", "use": "@vercel/python" },
+    { "src": "index.html", "use": "@vercel/static" }
   ],
   "rewrites": [
-    {
-      "source": "/api/extract",
-      "destination": "/extract.py"
-    }
+    { "source": "/api/extract", "destination": "/extract.py" }
   ]
 }
