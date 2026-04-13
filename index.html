@@ -6,81 +6,153 @@
     <title>All Video Downloader - Fast & Free</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-white">
-    <header class="sticky top-0 z-40 border-b border-gray-100 bg-white">
-        <nav class="mx-auto max-w-screen-2xl px-4 py-2.5 flex justify-between items-center">
-            <a href="/" class="text-xl font-semibold text-blue-700">All Video Downloader</a>
-            <div class="hidden md:block text-gray-500 text-sm">Professional Media Extraction</div>
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+    <header class="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
+        <nav class="mx-auto max-w-screen-2xl px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold text-blue-700">All Video Downloader</a>
+            <div class="hidden md:flex gap-6 text-sm font-medium text-gray-600">
+                <a href="#" class="hover:text-blue-700">TikTok</a>
+                <a href="#" class="hover:text-blue-700">YouTube</a>
+                <a href="#" class="hover:text-blue-700">Instagram</a>
+                <a href="#" class="hover:text-blue-700">Facebook</a>
+            </div>
         </nav>
     </header>
 
-    <main class="mb-8">
-        <section class="bg-gradient-to-b from-blue-50 to-transparent py-12 sm:py-16">
-            <div class="flex flex-col items-center gap-4 px-5 text-center">
-                <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">All Video Downloader</h1>
-                <h2 class="text-lg text-gray-500 lg:text-xl">Fast, free, and simple. Save videos from 1,000+ websites</h2>
-                
-                <div class="mx-auto w-full max-w-5xl mt-8">
-                    <div class="flex flex-col gap-y-4 sm:flex-row shadow-lg rounded-lg overflow-hidden border border-blue-200">
-                        <input id="videoUrl" class="block w-full border-none bg-white p-4 text-sm focus:ring-2 focus:ring-blue-500 outline-none" type="text" placeholder="Paste link here (YouTube, TikTok, Instagram...)">
-                        <button id="downloadBtn" class="bg-blue-700 text-white px-8 py-4 hover:bg-blue-800 font-bold transition-all flex items-center justify-center">
+    <main>
+        <section class="bg-white border-b border-gray-100">
+            <div class="mx-auto max-w-5xl px-6 py-16 text-center">
+                <h1 class="text-4xl font-extrabold tracking-tight sm:text-6xl mb-4">
+                    Online Video Downloader
+                </h1>
+                <p class="text-lg text-gray-500 mb-10">
+                    Paste a link to download videos and images from 1,000+ websites.
+                </p>
+
+                <div class="relative max-w-4xl mx-auto">
+                    <div class="flex flex-col sm:flex-row shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+                        <input 
+                            id="videoUrl" 
+                            type="text" 
+                            placeholder="Paste the link here (e.g. https://youtube.com/...)" 
+                            class="flex-grow p-5 text-base outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                        >
+                        <button 
+                            id="downloadBtn" 
+                            class="bg-blue-700 text-white px-10 py-5 text-lg font-bold hover:bg-blue-800 transition-colors flex items-center justify-center gap-2"
+                        >
                             <span>Download</span>
                         </button>
                     </div>
                 </div>
 
-                <div id="result" class="mt-10 hidden w-full max-w-2xl bg-white p-6 rounded-xl border border-gray-200 shadow-xl">
-                    <p id="videoTitle" class="font-bold text-gray-800 mb-4 text-lg"></p>
-                    <div class="flex flex-col gap-3">
-                        <a id="saveLink" href="#" target="_blank" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-bold text-center">
-                            Download Video File
+                <div id="loader" class="mt-12 hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-4 border-blue-700 border-t-transparent mx-auto"></div>
+                    <p class="text-blue-700 mt-4 font-semibold">Extracting high-quality links...</p>
+                </div>
+
+                <div id="result" class="mt-12 hidden max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+                    <div class="flex flex-col items-center">
+                        <div class="bg-blue-100 p-4 rounded-full mb-4">
+                            <svg class="w-8 h-8 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                        </div>
+                        <h3 id="videoTitle" class="text-xl font-bold text-gray-800 mb-6 px-2"></h3>
+                        <a 
+                            id="saveLink" 
+                            href="#" 
+                            target="_blank" 
+                            download
+                            class="w-full bg-green-600 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-green-700 transition-all shadow-lg"
+                        >
+                            Save Full HD Video
                         </a>
-                        <p class="text-xs text-gray-400 italic">If the video plays instead of downloading, right-click and 'Save Video As'.</p>
+                        <p class="mt-4 text-xs text-gray-400">
+                            * Note: If video plays in browser, right-click and select "Save Video As"
+                        </p>
                     </div>
                 </div>
-                
-                <div id="loader" class="mt-10 hidden">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto"></div>
-                    <p class="text-blue-700 mt-2 font-medium">Bypassing restrictions...</p>
+            </div>
+        </section>
+
+        <section class="py-20 bg-gray-50">
+            <div class="mx-auto max-w-screen-xl px-6 grid md:grid-cols-3 gap-12 text-center">
+                <div>
+                    <div class="text-blue-700 mb-4 text-3xl font-bold">100% Free</div>
+                    <p class="text-gray-600">No subscriptions, no limits, no hidden fees. High-speed downloads forever.</p>
+                </div>
+                <div>
+                    <div class="text-blue-700 mb-4 text-3xl font-bold">No Watermark</div>
+                    <p class="text-gray-600">Get clean videos from TikTok, Instagram, and YouTube without annoying logos.</p>
+                </div>
+                <div>
+                    <div class="text-blue-700 mb-4 text-3xl font-bold">Safe & Secure</div>
+                    <p class="text-gray-600">We don't store your data or the videos you download. Completely private.</p>
                 </div>
             </div>
         </section>
     </main>
 
+    <footer class="border-t border-gray-200 bg-white py-10 text-center text-gray-500 text-sm">
+        <p>&copy; 2026 All Video Downloader. Built for Qasim Ali.</p>
+    </footer>
+
     <script>
-        document.getElementById('downloadBtn').addEventListener('click', async () => {
-            const urlInput = document.getElementById('videoUrl').value.trim();
-            const resultDiv = document.getElementById('result');
-            const loader = document.getElementById('loader');
+        const btn = document.getElementById('downloadBtn');
+        const input = document.getElementById('videoUrl');
+        const loader = document.getElementById('loader');
+        const result = document.getElementById('result');
+        const title = document.getElementById('videoTitle');
+        const link = document.getElementById('saveLink');
 
-            if (!urlInput) return alert("Please paste a valid link!");
+        btn.addEventListener('click', async () => {
+            const url = input.value.trim();
+            if (!url) {
+                alert("Please paste a video URL first.");
+                return;
+            }
 
+            // Reset UI
             loader.classList.remove('hidden');
-            resultDiv.classList.add('hidden');
+            result.classList.add('hidden');
+            btn.disabled = true;
 
             try {
-                // We point to our local Vercel API
+                // Pointing to your Vercel Python API
                 const response = await fetch('/api/extract', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url: urlInput })
+                    body: JSON.stringify({ url: url })
                 });
 
                 const data = await response.json();
 
                 if (data.url) {
-                    document.getElementById('videoTitle').innerText = data.title;
-                    document.getElementById('saveLink').href = data.url;
-                    resultDiv.classList.remove('hidden');
+                    title.textContent = data.title || "Video Ready for Download";
+                    link.href = data.url;
+                    result.classList.remove('hidden');
                 } else {
-                    // Show the specific error from Python for debugging
-                    alert("Error: " + (data.error || "Could not extract video. The platform might be blocking us."));
+                    // Specific bypass message for bot blocks
+                    if (data.error && data.error.includes("Sign in")) {
+                        alert("Bypass Failed: YouTube detected our server. Please try again in 5 minutes or use a different video.");
+                    } else {
+                        alert("Error: " + (data.error || "Could not find video link."));
+                    }
                 }
             } catch (err) {
-                alert("The server is currently being rate-limited. Please try again in 1 minute.");
+                alert("Server Connection Failed. Please ensure Vercel deployment is finished.");
+                console.error(err);
             } finally {
                 loader.classList.add('hidden');
+                btn.disabled = false;
             }
+        });
+
+        // Allow 'Enter' key to trigger download
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') btn.click();
         });
     </script>
 </body>
