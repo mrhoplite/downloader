@@ -1,4 +1,14 @@
 {
+  "builds": [
+    {
+      "src": "extract.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/extract",
