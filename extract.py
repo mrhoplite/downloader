@@ -10,45 +10,44 @@ class handler(BaseHTTPRequestHandler):
             data = json.loads(post_data)
             url = data.get('url')
 
-            if not url:
-                raise ValueError("No URL provided")
-
-            # High-compatibility settings for Cloud Hosting
+            # This is the "Magic" configuration to bypass Data Center blocks
             ydl_opts = {
                 'format': 'best',
                 'quiet': True,
                 'no_warnings': True,
                 'nocheckcertificate': True,
-                # This force-uses a mobile user agent which often bypasses data center blocks
-                'user_agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1',
-                'extract_flat': False,
-                'socket_timeout': 10,
+                # Using an Android user-agent is the best way to get direct .mp4 links
+                'user_agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36',
+                'http_headers': {
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                    'Accept-Language': 'en-US,en;q=0.5',
+                },
+                # Bypassing the "Sign in to confirm" error
+                'extractor_args': {'youtube': {'player_client': ['android', 'web']}}
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                # 'download=False' is crucial; Vercel will crash if you try to save the file
                 info = ydl.extract_info(url, download=False)
                 
-                # Try to find the best direct URL
+                # Handling different platform response structures
                 video_url = info.get('url')
                 if not video_url and 'formats' in info:
-                    # Filter for formats that include both audio and video
-                    for f in info['formats']:
-                        if f.get('vcodec') != 'none' and f.get('acodec') != 'none':
-                            video_url = f.get('url')
-                            break
+                    # Look for a format that has both audio and video
+                    formats = [f for f in info['formats'] if f.get('acodec') != 'none' and f.get('vcodec') != 'none']
+                    if formats:
+                        video_url = formats[-1].get('url') # Get the highest quality
 
-                title = info.get('title', 'Downloaded Video')
+                title = info.get('title', 'Video File')
                 
                 self.send_response(200)
                 self.send_header('Content-type', 'application/json')
-                # Allow the browser to access this from your domain
-                self.send_header('Access-Control-Allow-Origin', '*') 
+                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(json.dumps({'url': video_url, 'title': title}).encode())
 
         except Exception as e:
-            self.send_response(200) # Send 200 so we can read the error in the console
+            self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
+            # Send the error back so we can see it in the alert box
             self.wfile.write(json.dumps({'error': str(e), 'url': None}).encode())
