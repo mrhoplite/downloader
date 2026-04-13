@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapAny Clone - Video Downloader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white">
+    <header class="sticky top-0 z-40 border-b border-gray-100 bg-white">
+        <nav class="mx-auto max-w-screen-2xl px-4 py-2.5 flex justify-between items-center">
+            <a href="/" class="text-xl font-semibold">SnapAny Clone</a>
+            <div class="hidden md:block text-gray-500 text-sm">Fast, Free, Simple</div>
+        </nav>
+    </header>
 
+    <main class="mb-8">
+        <section class="bg-gradient-to-b from-blue-50 to-transparent py-12 sm:py-16">
+            <div class="flex flex-col items-center gap-4 px-5 text-center">
+                <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Online Video Downloader</h1>
+                <h2 class="text-lg text-gray-500 lg:text-xl">Save videos from 1,000+ websites instantly</h2>
+                
+                <div class="mx-auto w-full max-w-5xl mt-8">
+                    <div class="flex flex-col gap-y-4 sm:flex-row shadow-lg rounded-lg overflow-hidden">
+                        <input id="videoUrl" class="block w-full border-gray-300 bg-white p-4 text-sm focus:ring-blue-500 outline-none" type="text" placeholder="Paste the link here (YouTube, TikTok, Instagram...)">
+                        <button id="downloadBtn" class="bg-blue-700 text-white px-8 py-4 hover:bg-blue-800 font-bold transition-all">
+                            Download
+                        </button>
+                    </div>
+                </div>
+
+                <div id="result" class="mt-10 hidden w-full max-w-2xl bg-white p-6 rounded-xl border border-gray-200 shadow-md">
+                    <p id="videoTitle" class="font-bold text-gray-800 mb-4"></p>
+                    <a id="saveLink" href="#" target="_blank" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 inline-block">
+                        Save Video File
+                    </a>
+                </div>
+                
+                <div id="loader" class="mt-10 hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700"></div>
+                    <p class="text-blue-700 mt-2">Extracting media links...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            const url = document.getElementById('videoUrl').value;
+            const resultDiv = document.getElementById('result');
+            const loader = document.getElementById('loader');
+
+            if (!url) return alert("Please paste a link!");
+
+            // Show loader, hide result
+            loader.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+
+                if (data.url) {
+                    document.getElementById('videoTitle').innerText = data.title;
+                    document.getElementById('saveLink').href = data.url;
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    alert("Could not find video. Check the link or try again.");
+                }
+            } catch (err) {
+                alert("Server error or IP block detected. Try again later.");
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
